@@ -14,5 +14,9 @@ require 'jsonapi/resource_identifier'
 
 require 'jsonapi/parse'
 
+if defined?(ActionController)
+  require 'jsonapi/resource/to_params'
+end
+
 module JSONAPI
 end

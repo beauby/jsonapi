@@ -1,5 +1,3 @@
-require 'jsonapi/resource/active_record'
-
 module JSONAPI
   # c.f. http://jsonapi.org/format/#document-resource-objects
   class Resource
