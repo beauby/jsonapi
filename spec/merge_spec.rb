@@ -32,12 +32,10 @@ describe JSONAPI::IncludeDirective, '.merge' do
                 created_at: {}
             }
         }
-    )
+    ).to_hash
 
-    merged_directive = d1.merge(d2)
-    expected = expected.to_hash
-    actual = merged_directive.to_hash
-
-    expect(actual).to eq expected
+    expect(d1.merge(d2).to_hash).to eq(expected)
+    d1.merge!(d2)
+    expect(d1.to_hash).to eq(expected)
   end
 end
