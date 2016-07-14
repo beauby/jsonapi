@@ -1,5 +1,4 @@
 require 'jsonapi/include_directive/parser'
-require 'active_support/core_ext/hash/deep_merge'
 
 module JSONAPI
   # Represent a recursive set of include directives
@@ -50,7 +49,10 @@ module JSONAPI
            "the value of 'other' MUST be an IncludeDirective" unless
           other.is_a?(IncludeDirective)
 
-      IncludeDirective.new(to_hash.deep_merge(other.to_hash), options.merge!(other.options))
+      hash = to_hash.dup
+      Parser.deep_merge!(hash, other.to_hash)
+
+      IncludeDirective.new(hash, options.merge!(other.options))
     end
 
     # @param another_directive [IncludeDirective]
