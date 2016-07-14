@@ -46,7 +46,7 @@ module JSONAPI
     # @return [IncludeDirective]
     def merge(other)
       fail ArgumentError,
-           "the value of 'other' MUST be an IncludeDirective" unless
+           "parameter MUST be an IncludeDirective" unless
           other.is_a?(IncludeDirective)
 
       hash = to_hash.dup
@@ -58,9 +58,9 @@ module JSONAPI
     # @param another_directive [IncludeDirective]
     # @return [IncludeDirective]
     def merge!(other)
-      new = merge(other)
-      @hash = new.hash
-      @options = new.options
+      merge_result = merge(other)
+      @hash = merge_result.hash
+      @options = merge_result.options
       self
     end
 
