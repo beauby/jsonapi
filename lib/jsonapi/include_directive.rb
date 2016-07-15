@@ -51,8 +51,9 @@ module JSONAPI
 
       hash = to_hash.dup
       Parser.deep_merge!(hash, other.to_hash)
+      merged_options = merge_options(options, other.options)
 
-      IncludeDirective.new(hash, options.merge!(other.options))
+      IncludeDirective.new(hash, merged_options)
     end
 
     # @param another_directive [IncludeDirective]
@@ -86,6 +87,12 @@ module JSONAPI
       end
 
       string_array.join(',')
+    end
+
+    private
+
+    def merge_options(opts, other_opts)
+      opts.merge(other_opts)
     end
   end
 end
