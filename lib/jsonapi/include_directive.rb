@@ -45,21 +45,19 @@ module JSONAPI
     # @param another_directive [IncludeDirective]
     # @return [IncludeDirective]
     def merge(other)
-      fail ArgumentError,
-           "parameter MUST be an IncludeDirective" unless
-          other.is_a?(IncludeDirective)
-
-      hash = to_hash.dup
-      Parser.deep_merge!(hash, other.to_hash)
-      merged_options = merge_options(options, other.options)
-
-      IncludeDirective.new(hash, merged_options)
+      dup.merge!(other)
     end
 
     # @param another_directive [IncludeDirective]
     # @return [IncludeDirective]
     def merge!(other)
-      merge_result = merge(other)
+      fail ArgumentError,
+           "parameter MUST be an IncludeDirective" unless
+          other.is_a?(IncludeDirective)
+
+      Parser.deep_merge!(to_hash, other.to_hash)
+
+      merge_result = IncludeDirective.new(hash, options)
       @hash = merge_result.hash
       @options = merge_result.options
       self
@@ -87,12 +85,6 @@ module JSONAPI
       end
 
       string_array.join(',')
-    end
-
-    private
-
-    def merge_options(opts, other_opts)
-      opts.merge(other_opts)
     end
   end
 end
