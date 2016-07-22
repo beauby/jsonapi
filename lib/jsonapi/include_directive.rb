@@ -12,6 +12,8 @@ module JSONAPI
   # @example 'posts.**' # => Include related posts, and all the included
   #   posts' related resources, and their related resources, recursively.
   class IncludeDirective
+    attr_reader :options, :hash
+
     # @param include_args (see Parser.include_hash_from_include_args)
     def initialize(include_args, options = {})
       include_hash = Parser.parse_include_args(include_args)
@@ -38,6 +40,28 @@ module JSONAPI
       when @options[:allow_wildcard] && @hash.key?(:*)
         @hash[:*]
       end
+    end
+
+    # @param another_directive [IncludeDirective]
+    # @return [IncludeDirective]
+    def merge(other)
+      dup.merge!(other)
+    end
+
+    # @param another_directive [IncludeDirective]
+    # @return [IncludeDirective]
+    def merge!(other)
+      fail ArgumentError,
+           "parameter MUST be an IncludeDirective" unless
+          other.is_a?(IncludeDirective)
+
+      hash = to_hash
+      Parser.deep_merge!(hash, other.to_hash)
+
+      merge_result = IncludeDirective.new(hash, options)
+      @hash = merge_result.hash
+      @options = merge_result.options
+      self
     end
 
     # @return [Hash{Symbol => Hash}]
