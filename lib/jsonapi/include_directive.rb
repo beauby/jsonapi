@@ -55,7 +55,8 @@ module JSONAPI
            "parameter MUST be an IncludeDirective" unless
           other.is_a?(IncludeDirective)
 
-      Parser.deep_merge!(to_hash, other.to_hash)
+      hash = to_hash
+      Parser.deep_merge!(hash, other.to_hash)
 
       merge_result = IncludeDirective.new(hash, options)
       @hash = merge_result.hash
