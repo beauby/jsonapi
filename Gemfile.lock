@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     jsonapi (0.1.1.beta2)
-      json (~> 1.8)
 
 GEM
   remote: https://rubygems.org/
@@ -40,4 +39,4 @@ DEPENDENCIES
   simplecov
 
 BUNDLED WITH
-   1.11.2
+   1.12.5
