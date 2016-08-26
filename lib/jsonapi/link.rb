@@ -1,14 +1,21 @@
 module JSONAPI
   # c.f. http://jsonapi.org/format/#document-links
   class Link
-    attr_reader :value, :href, :meta
+    # @return [String, Hash]
+    attr_reader :value
+    # @return [String]
+    attr_reader :href
+    # @return [Hash]
+    attr_reader :meta
 
     def initialize(link_hash, options = {})
       @hash = link_hash
 
       validate!(link_hash)
       @value = link_hash
-      return unless link_hash.is_a?(Hash)
+      unless link_hash.is_a?(Hash)
+        link_hash = { 'href' => link_hash}
+      end
 
       @href = link_hash['href']
       @meta = link_hash['meta']
