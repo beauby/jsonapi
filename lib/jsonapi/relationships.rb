@@ -26,6 +26,8 @@ module JSONAPI
       @relationships.each(&block)
     end
 
+    # @param [String] rel_name
+    # @return [JSONAPI::Relationship]
     def [](rel_name)
       @relationships[rel_name.to_s]
     end
