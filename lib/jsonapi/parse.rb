@@ -1,5 +1,3 @@
-require 'json'
-
 module JSONAPI
   module_function
 
