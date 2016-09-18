@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(spec)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'json', '~>1.8'
+  spec.add_dependency 'json', '>= 1.8', '< 3'
 
   spec.add_development_dependency 'rake', '>=0.9'
   spec.add_development_dependency 'rspec', '~>3.4'
