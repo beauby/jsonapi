@@ -1,8 +1,21 @@
 module JSONAPI
   # c.f. http://jsonapi.org/format/#document-resource-objects
   class Resource
-    attr_reader :id, :type, :attributes, :relationships, :links, :meta
+    # @return [String]
+    attr_reader :id
+    # @return [String]
+    attr_reader :type
+    # @return [JSONAPI::Attributes]
+    attr_reader :attributes
+    # @return [JSONAPI::Relationships]
+    attr_reader :relationships
+    # @return [JSONAPI::Links]
+    attr_reader :links
+    # @return [Hash]
+    attr_reader :meta
 
+    # @param [Hash] resource_hash
+    # @param [Hash] options
     def initialize(resource_hash, options = {})
       @hash = resource_hash
       @options = options.dup
@@ -11,14 +24,15 @@ module JSONAPI
       @id = resource_hash['id']
       @type = resource_hash['type']
       @attributes_hash = resource_hash['attributes'] || {}
-      @attributes = Attributes.new(@attributes_hash, @options)
+      @attributes = JSONAPI::Attributes.new(@attributes_hash, @options)
       @relationships_hash = resource_hash['relationships'] || {}
-      @relationships = Relationships.new(@relationships_hash, @options)
+      @relationships = JSONAPI::Relationships.new(@relationships_hash, @options)
       @links_hash = resource_hash['links'] || {}
-      @links = Links.new(@links_hash, @options)
+      @links = JSONAPI::Links.new(@links_hash, @options)
       @meta = resource_hash['meta'] if resource_hash.key?('meta')
     end
 
+    # @return [Hash]
     def to_hash
       @hash
     end
