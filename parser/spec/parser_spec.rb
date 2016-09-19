@@ -110,4 +110,10 @@ describe JSONAPI::Parser, '#parse' do
         .to raise_error JSONAPI::Parser::InvalidDocument
     end
   end
+
+  it 'raises InvalidDocument on nil input' do
+    expect {
+      JSONAPI.parse(nil)
+    }.to raise_error JSONAPI::Parser::InvalidDocument
+  end
 end
