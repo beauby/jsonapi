@@ -23,7 +23,15 @@ module JSONAPI
     end
 
     def collection?
-      @data.is_a?(Array)
+      data.is_a?(Array)
+    end
+
+    def link_resources(index)
+      if collection?
+        data.each { |ri| ri.link_resource(index) }
+      elsif !data.nil?
+        data.link_resource(index)
+      end
     end
 
     private

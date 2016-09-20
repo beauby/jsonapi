@@ -1,7 +1,7 @@
 module JSONAPI
   # c.f. http://jsonapi.org/format/#document-resource-identifier-objects
   class ResourceIdentifier
-    attr_reader :id, :type
+    attr_reader :id, :type, :resource
 
     def initialize(resource_identifier_hash, options = {})
       @hash = resource_identifier_hash
@@ -14,6 +14,10 @@ module JSONAPI
 
     def to_hash
       @hash
+    end
+
+    def link_resource(index)
+      @resource = index[[type, id]]
     end
 
     private
