@@ -3,14 +3,14 @@ module JSONAPI
   class Attributes
     include Enumerable
 
-    def initialize(attributes_hash, options = {})
+    def initialize(attributes_hash, _options = {})
+      @hash = attributes_hash
       fail InvalidDocument,
            "the value of 'attributes' MUST be an object" unless
-        attributes_hash.is_a?(Hash)
+        @hash.is_a?(Hash)
 
-      @hash = attributes_hash
       @attributes = {}
-      attributes_hash.each do |attr_name, attr_val|
+      @hash.each do |attr_name, attr_val|
         @attributes[attr_name.to_s] = attr_val
         define_singleton_method(attr_name) do
           @attributes[attr_name.to_s]

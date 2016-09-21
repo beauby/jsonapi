@@ -3,15 +3,17 @@ module JSONAPI
   class Link
     attr_reader :value, :href, :meta
 
-    def initialize(link_hash, options = {})
+    def initialize(link_hash, _options = {})
       @hash = link_hash
 
-      validate!(link_hash)
-      @value = link_hash
-      return unless link_hash.is_a?(Hash)
+      validate!
 
-      @href = link_hash['href']
-      @meta = link_hash['meta']
+      if @hash.is_a?(Hash)
+        @href = @hash['href']
+        @meta = @hash['meta']
+      else
+        @value = @hash
+      end
     end
 
     def to_hash
@@ -20,18 +22,18 @@ module JSONAPI
 
     private
 
-    def validate!(link_hash)
+    def validate!
       case
-      when !link_hash.is_a?(String) && !link_hash.is_a?(Hash)
+      when !@hash.is_a?(String) && !@hash.is_a?(Hash)
         fail InvalidDocument,
              "a 'link' object MUST be either a string or an object"
-      when link_hash.is_a?(Hash) && (!link_hash.key?('href') ||
-                                     !link_hash['href'].is_a?(String))
+      when @hash.is_a?(Hash) && (!@hash.key?('href') ||
+                                 !@hash['href'].is_a?(String))
         fail InvalidDocument,
              "a 'link' object MUST be either a string or an object containing" \
              " an 'href' string"
-      when link_hash.is_a?(Hash) && (!link_hash.key?('meta') ||
-                                     !link_hash['meta'].is_a?(Hash))
+      when @hash.is_a?(Hash) && (!@hash.key?('meta') ||
+                                 !@hash['meta'].is_a?(Hash))
         fail InvalidDocument,
              "a 'link' object MUST be either a string or an object containing" \
              " an 'meta' object"

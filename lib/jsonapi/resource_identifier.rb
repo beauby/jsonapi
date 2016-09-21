@@ -3,13 +3,13 @@ module JSONAPI
   class ResourceIdentifier
     attr_reader :id, :type
 
-    def initialize(resource_identifier_hash, options = {})
+    def initialize(resource_identifier_hash, _options = {})
       @hash = resource_identifier_hash
 
-      validate!(resource_identifier_hash)
+      validate!
 
-      @id = resource_identifier_hash['id']
-      @type = resource_identifier_hash['type']
+      @id = @hash['id']
+      @type = @hash['type']
     end
 
     def to_hash
@@ -18,17 +18,17 @@ module JSONAPI
 
     private
 
-    def validate!(resource_identifier_hash)
+    def validate!
       case
-      when !resource_identifier_hash.key?('id')
+      when !@hash.key?('id')
         fail InvalidDocument,
              "a resource identifier object MUST contain an 'id'"
-      when !resource_identifier_hash['id'].is_a?(String)
+      when !@hash['id'].is_a?(String)
         fail InvalidDocument, "the value of 'id' MUST be a string"
-      when !resource_identifier_hash.key?('type')
+      when !@hash.key?('type')
         fail InvalidDocument,
              "a resource identifier object MUST contain a 'type'"
-      when !resource_identifier_hash['type'].is_a?(String)
+      when !@hash['type'].is_a?(String)
         fail InvalidDocument, "the value of 'type' MUST be a string"
       end
     end
