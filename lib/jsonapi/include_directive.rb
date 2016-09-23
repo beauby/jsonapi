@@ -27,6 +27,11 @@ module JSONAPI
         (@options[:allow_wildcard] && (@hash.key?(:*) || @hash.key?(:**)))
     end
 
+    # @return [Array<Symbol>]
+    def keys
+      @hash.keys
+    end
+
     # @param key [Symbol, String]
     # @return [IncludeDirective, nil]
     def [](key)

@@ -12,6 +12,7 @@ require 'jsonapi/relationships'
 require 'jsonapi/resource'
 require 'jsonapi/resource_identifier'
 
+require 'jsonapi/renderer'
 require 'jsonapi/parse'
 
 module JSONAPI

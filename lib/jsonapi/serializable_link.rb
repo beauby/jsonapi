@@ -1,5 +1,9 @@
 module JSONAPI
   class SerializableLink
+    def self.as_jsonapi(param_hash = {}, &block)
+      self.new(param_hash, &block).as_jsonapi
+    end
+
     def initialize(param_hash = {}, &block)
       param_hash.each do |k, v|
         instance_variable_set("@#{k}", v)
@@ -8,7 +12,7 @@ module JSONAPI
       @_href ||= str_value
     end
 
-    def to_hash
+    def as_jsonapi
       @_hash ||=
         if @_meta.nil?
           @_href
