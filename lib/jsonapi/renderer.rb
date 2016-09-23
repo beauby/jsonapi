@@ -6,8 +6,7 @@ module JSONAPI
       @meta = options[:meta] || nil
       @links = options[:links] || {}
       @fields = options[:fields] || {}
-      # NOTE(beauby): Room for some nifty defaults on those.
-      @jsonapi = nil
+      @jsonapi = nil # NOTE(beauby): Room for some nifty defaults on those.
       @include = JSONAPI::IncludeDirective.new(options[:include] || {})
     end
 
@@ -90,23 +89,10 @@ module JSONAPI
             rel_hash[:meta] = rel.meta unless rel.meta.nil?
           end
           if include_dir.key?(key) && !rel_hash.key?(:data)
-            data =
-              if rel.linkage_data.nil?
-                Array(rel.data).map do |rel_res|
-                  type, id = resource_identifier(rel_res)
-                  { type: type, id: id }
-                end
-              else
-                Array(rel.linkage_data)
-              end
-            rel_hash[:data] = rel.data.respond_to?(:each) ? data : data[0]
+            rel_hash[:data] = rel.linkage_data
           end
         end
       end
-    end
-
-    def field_whitelist(type)
-      @fields[type.to_sym]
     end
 
     def filter_fields(type, hash)
