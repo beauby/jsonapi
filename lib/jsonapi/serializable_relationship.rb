@@ -21,7 +21,16 @@ module JSONAPI
 
     def linkage_data(&block)
       if block.nil?
-        @_linkage_data ||= (@_linkage_data_block && @_linkage_data_block.call)
+        @_linkage_data ||=
+          if @_linkage_data_block
+            @_linkage_data_block.call
+          elsif data.respond_to?(:each)
+            data.map { |res| { type: res.type, id: res.id } }
+          elsif data.nil?
+            nil
+          else
+            { type: data.type, id: data.id }
+          end
       else
         @_linkage_data_block = block
       end

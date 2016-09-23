@@ -9,15 +9,15 @@ module JSONAPI
     class_attribute :type
     class_attribute :type_block
     class_attribute :id_block
-    class_attribute :attribute_blocks
-    class_attribute :relationship_blocks
+    class_attribute :attr_blocks
+    class_attribute :rel_blocks
     class_attribute :link_blocks
     class_attribute :meta
     class_attribute :meta_block
 
     def self.inherited(subclass)
-      subclass.attribute_blocks = {}
-      subclass.relationship_blocks = {}
+      subclass.attr_blocks = {}
+      subclass.rel_blocks = {}
       subclass.link_blocks = {}
     end
     
@@ -31,11 +31,11 @@ module JSONAPI
     end
 
     def self.attribute(name, &block)
-      self.attribute_blocks[name] = block
+      self.attr_blocks[name] = block
     end
 
     def self.relationship(name, &block)
-      self.relationship_blocks[name] = block
+      self.rel_blocks[name] = block
     end
     
     def self.link(name, &block)
@@ -47,37 +47,19 @@ module JSONAPI
       self.meta_block = block
     end
 
-    def initialize(params = {})
-      @_param_hash = params
-      params.each do |name, value|
+    def initialize(param_hash = {})
+      param_hash.each do |name, value|
         instance_variable_set("@#{name}", value)
       end
-    end
-
-    def id
-      @_id ||= instance_eval(&self.class.id_block)
-    end
-
-    def type
-      @_type ||= (self.class.type || instance_eval(&self.class.type_block))
-    end
-
-    def attributes
-      @_attributes ||=
-        Hash[self.class.attribute_blocks.map { |k, v| [k, eval_attribute(v)] }]
-    end
-
-    def relationships
-      @_relationships ||=
-        Hash[self.class.relationship_blocks.map { |k, v| [k, eval_relationship(v)] }]
-    end
-
-    def links
-      @_links ||= Hash[self.class.link_blocks.map { |k, v| [k, eval_link(v)] }]
-    end
-
-    def meta
-      @_meta ||=
+      @_id = instance_eval(&self.class.id_block)
+      @_type = (self.class.type || instance_eval(&self.class.type_block))
+      @_attributes =
+        Hash[self.class.attr_blocks.map { |k, v| [k, instance_eval(&v)] }]
+      @_relationships =
+        Hash[self.class.rel_blocks.map { |k, v| [k, JSONAPI::SerializableRelationship.new(param_hash, &v)] }]
+      @_links =
+        Hash[self.class.link_blocks.map { |k, v| [k, JSONAPI::SerializableLink.new(param_hash, &v).to_hash] }]
+      @_meta =
         if self.class.meta
           self.class.meta
         elsif self.class.meta_block
@@ -85,18 +67,10 @@ module JSONAPI
         end
     end
 
-    private
-
-    def eval_attribute(block)
-      instance_eval(&block)
-    end
-
-    def eval_relationship(block)
-      JSONAPI::SerializableRelationship.new(@_param_hash, &block)
-    end
-
-    def eval_link(block)
-      JSONAPI::SerializableLink.new(@_param_hash, &block).to_hash
+    [:id, :type, :attributes, :relationships, :links, :meta].each do |key|
+      define_method(key) do
+        instance_variable_get("@_#{key}")
+      end
     end
   end
 end
