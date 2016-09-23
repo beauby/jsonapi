@@ -17,7 +17,7 @@ module JSONAPI
       @json = {}
 
       if @errors
-        @json[:errors] = @resources.map(&:error_hash)
+        @json[:errors] = @resources.map(&:as_jsonapi)
       else
         @json[:data] = @resources.respond_to?(:each) ? @primary : @primary[0]
         @json[:included] = @included if @included.any?
@@ -39,8 +39,8 @@ module JSONAPI
       @queue = []
 
       Array(@resources).each do |res|
-        process_resource(res, "", @include, true)
-        @processed.add([res.type, res.id, ""])
+        process_resource(res, '', @include, true)
+        @processed.add([res.jsonapi_type, res.jsonapi_id, ''])
       end
       until @queue.empty? do
         res, prefix, include_dir = @queue.pop
@@ -48,71 +48,36 @@ module JSONAPI
       end
     end
 
-    def resource_identifier(res)
-      [res.type, res.id]
+    def merge_resources!(a, b)
+      b[:relationships].each do |name, rel|
+        a[:relationships][name][:data] ||= rel[:data] if rel.key?(:data)
+        (a[:relationships][name][:links] ||= {})
+          .merge!(rel[:links]) if rel.key?(:links)
+      end
     end
 
     def process_resource(res, prefix, include_dir, is_primary)
-      hash = (@hashes[resource_identifier(res)] ||= {})
-      if hash.empty?
-        hash[:id] = res.id
-        hash[:type] = res.type
-        filtered_attributes = filter_fields(res.type, res.attributes)
-        hash[:attributes] = filtered_attributes if filtered_attributes.any?
-        hash[:links] = res.links if res.links.any?
-        hash[:meta] = res.meta unless res.meta.nil?
-        if is_primary
-          @primary << hash
-        else
-          @included << hash
-        end
+      ri = [res.jsonapi_type, res.jsonapi_id]
+      hash = res.as_jsonapi(fileds: @fields[res.jsonapi_type],
+                            include: include_dir.keys)
+      if @hashes.key?(ri)
+        merge_resources!(@hashes[ri], hash)
+      else
+        (is_primary ? @primary : @included) << (@hashes[ri] = hash)
       end
       process_relationships(hash, res, prefix, include_dir)
     end
 
     def process_relationships(hash, res, prefix, include_dir)
-      whitelist = @fields[res.type.to_sym]
-      res.relationships.each do |key, rel|
-        if include_dir.key?(key) # NOTE(beauby): || always_include_linkage
-          Array(rel.data).each do |child_res|
-            child_prefix = prefix + key.to_s
-            next unless @processed.add?([child_res.type, child_res.id, child_prefix])
-            @queue << [child_res, child_prefix, include_dir[key]]
-          end
-        end
-
-        if whitelist.nil? || whitelist.include?(key)
-          hash[:relationships] ||= {}
-          rel_hash = (hash[:relationships][key] ||= {})
-          if rel_hash.empty?
-            rel_hash[:links] = rel.links if rel.links.any?
-            rel_hash[:meta] = rel.meta unless rel.meta.nil?
-          end
-          if include_dir.key?(key) && !rel_hash.key?(:data)
-            rel_hash[:data] = rel.linkage_data
-          end
+      res.jsonapi_related(include_dir.keys).each do |key, data|
+        Array(data).each do |child_res|
+          child_prefix = "#{prefix}.#{key}"
+          next unless @processed.add?([child_res.jsonapi_type,
+                                       child_res.jsonapi_id,
+                                       child_prefix])
+          @queue << [child_res, child_prefix, include_dir[key]]
         end
       end
-    end
-
-    def filter_fields(type, hash)
-      whitelist = @fields[type.to_sym]
-      return hash if whitelist.nil?
-      hash.select { |k, _| whitelist.include?(k) }
-    end
-
-    def error_hash(error)
-      hash = {}
-      hash[:id] = error.id unless error.id.nil?
-      hash[:links] = error.links unless error.links.nil?
-      hash[:status] = error.status unless error.status.nil?
-      hash[:code] = error.code unless error.code.nil?
-      hash[:title] = error.title unless error.title.nil?
-      hash[:detail] = error.detail unless error.detail.nil?
-      hash[:source] = error.source unless error.source.nil?
-      hash[:meta] = error.meta unless error.meta.nil?
-
-      hash
     end
   end
 

@@ -1,28 +1,24 @@
 require 'jsonapi/serializable_link'
 require 'jsonapi/serializable_relationship'
 
-# TEMP
 require 'active_support/core_ext/class/attribute'
 
 module JSONAPI
   class SerializableResource
-    class_attribute :type
-    class_attribute :type_block
-    class_attribute :id_block
-    class_attribute :attr_blocks
-    class_attribute :rel_blocks
-    class_attribute :link_blocks
-    class_attribute :meta
-    class_attribute :meta_block
+    class_attribute :type_val, :type_block, :id_block, :attribute_blocks,
+                    :relationship_blocks, :link_blocks, :meta_val, :meta_block
+    self.attribute_blocks = {}
+    self.relationship_blocks = {}
+    self.link_blocks = {}
 
     def self.inherited(subclass)
-      subclass.attr_blocks = {}
-      subclass.rel_blocks = {}
-      subclass.link_blocks = {}
+      subclass.attribute_blocks = attribute_blocks.dup
+      subclass.relationship_blocks = relationship_blocks.dup
+      subclass.link_blocks = link_blocks.dup
     end
-    
+
     def self.type(value = nil, &block)
-      self.type = value
+      self.type_val = value
       self.type_block = block
     end
 
@@ -31,11 +27,11 @@ module JSONAPI
     end
 
     def self.attribute(name, &block)
-      self.attr_blocks[name] = block
+      self.attribute_blocks[name] = block
     end
 
     def self.relationship(name, &block)
-      self.rel_blocks[name] = block
+      self.relationship_blocks[name] = block
     end
     
     def self.link(name, &block)
@@ -43,33 +39,72 @@ module JSONAPI
     end
 
     def self.meta(value = nil, &block)
-      self.meta = value
+      self.meta_val = value
       self.meta_block = block
     end
 
     def initialize(param_hash = {})
-      param_hash.each do |name, value|
-        instance_variable_set("@#{name}", value)
-      end
+      param_hash.each { |k, v| instance_variable_set("@#{k}", v) }
       @_id = instance_eval(&self.class.id_block)
-      @_type = (self.class.type || instance_eval(&self.class.type_block))
-      @_attributes =
-        Hash[self.class.attr_blocks.map { |k, v| [k, instance_eval(&v)] }]
-      @_relationships =
-        Hash[self.class.rel_blocks.map { |k, v| [k, JSONAPI::SerializableRelationship.new(param_hash, &v)] }]
-      @_links =
-        Hash[self.class.link_blocks.map { |k, v| [k, JSONAPI::SerializableLink.new(param_hash, &v).to_hash] }]
-      @_meta =
-        if self.class.meta
-          self.class.meta
-        elsif self.class.meta_block
-          instance_eval(&self.class.meta_block)
-        end
+      @_type = self.class.type_val || instance_eval(&self.class.type_block)
+      @_attributes = {}
+      @_relationships = self.class.relationship_blocks
+                        .each_with_object({}) do |(k, v), h|
+        h[k] = JSONAPI::SerializableRelationship.new(param_hash, &v)
+      end
+      @_links = self.class.link_blocks
+                .each_with_object({}) do |(k, v), h|
+        h[k] = JSONAPI::SerializableLink.as_jsonapi(param_hash, &v)
+      end
+      @_meta = if self.class.meta_val
+                 self.class.meta_val
+               elsif self.class.meta_block
+                 instance_eval(&self.class.meta_block)
+               end
     end
 
-    [:id, :type, :attributes, :relationships, :links, :meta].each do |key|
-      define_method(key) do
-        instance_variable_get("@_#{key}")
+    def as_jsonapi(params = {})
+      hash = {}
+      hash[:id] = @_id
+      hash[:type] = @_type
+      attr = attributes(params[:fields])
+      hash[:attributes] = attr if attr.any?
+      rels = relationships(params[:field], params[:include])
+      hash[:relationships] = rels if rels.any?
+      hash[:links] = @_links if @_links.any?
+      hash[:meta] = @_meta unless @_meta.nil?
+
+      hash
+    end
+
+    def jsonapi_type
+      @_type
+    end
+
+    def jsonapi_id
+      @_id
+    end
+
+    def jsonapi_related(include)
+      @_relationships
+        .select { |k, v| include.include?(k) }
+        .each_with_object({}) { |(k, v), h| h[k] = Array(v.data) }
+    end
+
+    private
+
+    def attributes(fields)
+      fields ||= self.class.attribute_blocks.keys
+      self.class.attribute_blocks
+        .select { |k, v| !@_attributes.key?(k) && fields.include?(k) }
+        .each { |k, v| @_attributes[k] = instance_eval(&v) }
+      @_attributes.select { |k, _| fields.include?(k) }
+    end
+
+    def relationships(fields, include)
+      fields ||= @_relationships.keys
+      @_relationships.each_with_object({}) do |(k, v), h|
+        h[k] = v.as_jsonapi(include.include?(k))
       end
     end
   end

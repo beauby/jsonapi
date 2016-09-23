@@ -1,99 +1,56 @@
 require 'jsonapi/serializable_link'
 
-# TEMP
 require 'active_support/core_ext/class/attribute'
 
 module JSONAPI
   class SerializableErrorSource
+    def self.as_jsonapi(params = {})
+      self.class.new(params).as_jsonapi
+    end
+
     def initialize(params = {})
       params.each do |name, value|
         instance_variable_set("@#{name}", value)
       end
+      @_data = {}
     end
 
-    def as_json
-      hash = {}
-      hash[:pointer] = pointer unless pointer.nil?
-      hash[:parameter] = parameter unless parameter.nil?
-
-      hash
+    def as_jsonapi
+      @_data
     end
 
     private
 
-    def pointer(value = nil, &block)
-      if value.nil? && block.nil?
-        @_pointer
-      else
-        @_pointer = (value || instance_eval(&block))
-      end
-    end
-
-    def parameter(value = nil, &block)
-      if value.nil? && block.nil?
-        @_parameter
-      else
-        @_parameter = (value || instance_eval(&block))
-      end
+    def method_missing(name, arg)
+      @_data[name] = arg
     end
   end
 
   class SerializableError
-    class_attribute :id
-    class_attribute :id_block
-    class_attribute :link_blocks
-    class_attribute :status
-    class_attribute :status_block
-    class_attribute :code
-    class_attribute :code_block
-    class_attribute :title
-    class_attribute :title_block
-    class_attribute :detail
-    class_attribute :detail_block
-    class_attribute :source
-    class_attribute :source_block
-    class_attribute :meta
-    class_attribute :meta_block
-
+    class_attribute :id, :id_block, :status, :status_block, :code, :code_block,
+                    :title, :title_block, :detail, :detail_block, :meta,
+                    :meta_block, :source_block, :link_blocks
     self.link_blocks = {}
 
-    def self.id(value = nil, &block)
-      self.id = value
-      self.id_block = block
-    end
+    class<< self
+      def inherited(subclass)
+        subclass.link_blocks = {}
+      end
 
-    def self.link(name, &block)
-      self.link_blocks[name] = block
-    end
+      [:id, :status, :code, :title, :detail, :meta].each do |key|
+        define_method(key) do |*args, &block|
+          self.send("@#{key}=", args[0])
+          self.send("@#{key}_block=", block)
+        end
+      end
 
-    def self.status(value = nil, &block)
-      self.status = value
-      self.status_block = block
-    end
+      def link(name, &block)
+        self.link_blocks[name] = block
+      end
 
-    def self.code(value = nil, &block)
-      self.code = value
-      self.code_block = block
-    end
-
-    def self.title(value = nil, &block)
-      self.title = value
-      self.title_block = block
-    end
-
-    def self.detail(value = nil, &block)
-      self.detail = value
-      self.detail_block = block
-    end
-
-    def self.source(value = nil, &block)
-      self.source = value
-      self.source_block = block
-    end
-
-    def self.meta(value = nil, &block)
-      self.meta = value
-      self.meta_block = block
+      def source(&block)
+        self.source_block = block
+      end
     end
 
     def initialize(params = {})
@@ -103,75 +60,37 @@ module JSONAPI
       end
     end
 
-    # TODO: those are optional fields
-    def id
-      @_id ||=
-        if self.class.id_block
-          instance_eval(self.class.id_block)
-        elsif 
-          self.class.id
-        end
-    end
-
-    def links
-      @_links ||= self.class.link_blocks
-                .each_with_object({}) do |(name, block), hash|
-        hash[name] = JSONAPI::SerializableLink.new(@_param_hash, block).to_hash
+    def as_jsonapi
+      hash = links.any? ? { links: links } : {}
+      [:id, :status, :code, :title, :detail, :meta, :source]
+        .each_with_object(hash) do |key, h|
+        value = send(key)
+        h[key] = value unless value.nil?
       end
     end
 
-    def status
-      @_status ||=
-        if self.class.status_block
-          instance_eval(self.class.status_block)
-        else
-          self.class.status
-        end
-    end
+    private
 
-    def code
-      @_code ||=
-        if self.class.code_block
-          instance_eval(self.class.code_block)
-        else
-          self.class.code
-        end
-    end
-
-    def title
-      @_title ||=
-        if self.class.title_block
-          instance_eval(self.class.title_block)
-        else
-          self.class.title
-        end
-    end
-
-    def detail
-      @_detail ||=
-        if self.class.detail_block
-          instance_eval(self.class.detail_block)
-        else
-          self.class.detail
-        end
+    def links
+      @_links ||= self.class.link_blocks.each_with_object({}) do |(k, v), h|
+        h[k] = JSONAPI::SerializableLink.as_jsonapi(@_param_hash, v)
+      end
     end
 
     def source
-      @_source ||=
-        if self.class.source_block
-          instance_eval(self.class.source_block)
-        else
-          self.class.source
-        end
+      @_source ||= JSONAPI::SerializableErrorSource.as_jsonapi(
+        @_param_hash, self.class.source_block)
     end
 
-    def meta
-      @_meta =
-        if self.class.meta_block
-          instance_eval(self.class.meta_block)
-        else
-          self.class.meta
+    [:id, :status, :code, :title, :detail, :meta].each do |key|
+      define_method(key) do
+        unless instance_variable_defined?("@#{key}")
+          instance_variable_set("@#{key}",
+                                self.class.send(key) ||
+                                instance_eval(self.class.send("#{key}_block")))
         end
+        instance_variable_get("@#{key}")
+      end
     end
   end
 end
