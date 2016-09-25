@@ -58,7 +58,7 @@ module JSONAPI
 
     def process_resource(res, prefix, include_dir, is_primary)
       ri = [res.jsonapi_type, res.jsonapi_id]
-      hash = res.as_jsonapi(fileds: @fields[res.jsonapi_type],
+      hash = res.as_jsonapi(fields: @fields[res.jsonapi_type],
                             include: include_dir.keys)
       if @hashes.key?(ri)
         merge_resources!(@hashes[ri], hash)
