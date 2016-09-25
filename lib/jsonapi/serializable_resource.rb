@@ -66,9 +66,10 @@ module JSONAPI
       hash = {}
       hash[:id] = @_id
       hash[:type] = @_type
-      attr = attributes(params[:fields])
+      attr = attributes(params[:fields] || @_attributes.keys)
       hash[:attributes] = attr if attr.any?
-      rels = relationships(params[:field], params[:include])
+      rels = relationships(params[:field] || @_relationships.keys,
+                           params[:include] || [])
       hash[:relationships] = rels if rels.any?
       hash[:links] = @_links if @_links.any?
       hash[:meta] = @_meta unless @_meta.nil?
@@ -93,7 +94,6 @@ module JSONAPI
     private
 
     def attributes(fields)
-      fields ||= self.class.attribute_blocks.keys
       self.class.attribute_blocks
         .select { |k, v| !@_attributes.key?(k) && fields.include?(k) }
         .each { |k, v| @_attributes[k] = instance_eval(&v) }
@@ -101,8 +101,9 @@ module JSONAPI
     end
 
     def relationships(fields, include)
-      fields ||= @_relationships.keys
-      @_relationships.each_with_object({}) do |(k, v), h|
+      @_relationships
+        .select { |k, _| fields.include?(k) }
+        .each_with_object({}) do |(k, v), h|
         h[k] = v.as_jsonapi(include.include?(k))
       end
     end
