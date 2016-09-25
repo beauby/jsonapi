@@ -1,45 +1,48 @@
-require 'active_support/core_ext/class/attribute'
 require 'jsonapi/serializable_link'
 require 'jsonapi/serializable_relationship'
 
 module JSONAPI
   class SerializableResource
-    class_attribute :type_val, :type_block, :id_block, :attribute_blocks,
+    class << self
+      attr_accessor :type_val, :type_block, :id_block, :attribute_blocks,
                     :relationship_blocks, :link_blocks, :meta_val, :meta_block
+
+      def type(value = nil, &block)
+        self.type_val = value
+        self.type_block = block
+      end
+
+      def id(&block)
+        self.id_block = block
+      end
+
+      def meta(value = nil, &block)
+        self.meta_val = value
+        self.meta_block = block
+      end
+
+      def attribute(name, &block)
+        attribute_blocks[name] = block
+      end
+
+      def relationship(name, &block)
+        relationship_blocks[name] = block
+      end
+
+      def link(name, &block)
+        link_blocks[name] = block
+      end
+    end
+
     self.attribute_blocks = {}
     self.relationship_blocks = {}
     self.link_blocks = {}
 
-    def self.inherited(subclass)
-      subclass.attribute_blocks = attribute_blocks.dup
-      subclass.relationship_blocks = relationship_blocks.dup
-      subclass.link_blocks = link_blocks.dup
-    end
-
-    def self.type(value = nil, &block)
-      self.type_val = value
-      self.type_block = block
-    end
-
-    def self.id(&block)
-      self.id_block = block
-    end
-
-    def self.meta(value = nil, &block)
-      self.meta_val = value
-      self.meta_block = block
-    end
-
-    def self.attribute(name, &block)
-      attribute_blocks[name] = block
-    end
-
-    def self.relationship(name, &block)
-      relationship_blocks[name] = block
-    end
-
-    def self.link(name, &block)
-      link_blocks[name] = block
+    def self.inherited(klass)
+      super
+      klass.attribute_blocks = attribute_blocks.dup
+      klass.relationship_blocks = relationship_blocks.dup
+      klass.link_blocks = link_blocks.dup
     end
 
     def initialize(param_hash = {})
@@ -53,11 +56,11 @@ module JSONAPI
                end
       @_attributes = {}
       @_relationships = self.class.relationship_blocks
-                        .each_with_object({}) do |(k, v), h|
+                            .each_with_object({}) do |(k, v), h|
         h[k] = JSONAPI::SerializableRelationship.new(param_hash, &v)
       end
       @_links = self.class.link_blocks
-                .each_with_object({}) do |(k, v), h|
+                    .each_with_object({}) do |(k, v), h|
         h[k] = JSONAPI::SerializableLink.as_jsonapi(param_hash, &v)
       end
     end
