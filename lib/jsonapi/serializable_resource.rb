@@ -1,7 +1,6 @@
+require 'active_support/core_ext/class/attribute'
 require 'jsonapi/serializable_link'
 require 'jsonapi/serializable_relationship'
-
-require 'active_support/core_ext/class/attribute'
 
 module JSONAPI
   class SerializableResource
@@ -26,6 +25,11 @@ module JSONAPI
       self.id_block = block
     end
 
+    def self.meta(value = nil, &block)
+      self.meta_val = value
+      self.meta_block = block
+    end
+
     def self.attribute(name, &block)
       self.attribute_blocks[name] = block
     end
@@ -38,15 +42,15 @@ module JSONAPI
       self.link_blocks[name] = block
     end
 
-    def self.meta(value = nil, &block)
-      self.meta_val = value
-      self.meta_block = block
-    end
-
     def initialize(param_hash = {})
       param_hash.each { |k, v| instance_variable_set("@#{k}", v) }
       @_id = instance_eval(&self.class.id_block)
       @_type = self.class.type_val || instance_eval(&self.class.type_block)
+      @_meta = if self.class.meta_val
+                 self.class.meta_val
+               elsif self.class.meta_block
+                 instance_eval(&self.class.meta_block)
+               end
       @_attributes = {}
       @_relationships = self.class.relationship_blocks
                         .each_with_object({}) do |(k, v), h|
@@ -56,11 +60,6 @@ module JSONAPI
                 .each_with_object({}) do |(k, v), h|
         h[k] = JSONAPI::SerializableLink.as_jsonapi(param_hash, &v)
       end
-      @_meta = if self.class.meta_val
-                 self.class.meta_val
-               elsif self.class.meta_block
-                 instance_eval(&self.class.meta_block)
-               end
     end
 
     def as_jsonapi(params = {})
@@ -87,7 +86,7 @@ module JSONAPI
 
     def jsonapi_related(include)
       @_relationships
-        .select { |k, v| include.include?(k) }
+        .select { |k, _| include.include?(k) }
         .each_with_object({}) { |(k, v), h| h[k] = Array(v.data) }
     end
 

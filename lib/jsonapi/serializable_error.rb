@@ -1,6 +1,5 @@
-require 'jsonapi/serializable_link'
-
 require 'active_support/core_ext/class/attribute'
+require 'jsonapi/serializable_link'
 
 module JSONAPI
   class SerializableErrorSource
@@ -32,7 +31,7 @@ module JSONAPI
                     :meta_block, :source_block, :link_blocks
     self.link_blocks = {}
 
-    class<< self
+    class << self
       def inherited(subclass)
         subclass.link_blocks = {}
       end
@@ -55,9 +54,7 @@ module JSONAPI
 
     def initialize(params = {})
       @_param_hash = params
-      params.each do |name, value|
-        instance_variable_set("@#{name}", value)
-      end
+      params.each { |k, v| instance_variable_set("@#{k}", v) }
     end
 
     def as_jsonapi
