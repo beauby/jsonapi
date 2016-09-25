@@ -1,7 +1,7 @@
 module JSONAPI
   class SerializableLink
     def self.as_jsonapi(param_hash = {}, &block)
-      self.new(param_hash, &block).as_jsonapi
+      new(param_hash, &block).as_jsonapi
     end
 
     def initialize(param_hash = {}, &block)

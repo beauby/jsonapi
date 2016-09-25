@@ -31,15 +31,15 @@ module JSONAPI
     end
 
     def self.attribute(name, &block)
-      self.attribute_blocks[name] = block
+      attribute_blocks[name] = block
     end
 
     def self.relationship(name, &block)
-      self.relationship_blocks[name] = block
+      relationship_blocks[name] = block
     end
-    
+
     def self.link(name, &block)
-      self.link_blocks[name] = block
+      link_blocks[name] = block
     end
 
     def initialize(param_hash = {})
@@ -95,8 +95,8 @@ module JSONAPI
 
     def attributes(fields)
       self.class.attribute_blocks
-        .select { |k, v| !@_attributes.key?(k) && fields.include?(k) }
-        .each { |k, v| @_attributes[k] = instance_eval(&v) }
+          .select { |k, _| !@_attributes.key?(k) && fields.include?(k) }
+          .each { |k, v| @_attributes[k] = instance_eval(&v) }
       @_attributes.select { |k, _| fields.include?(k) }
     end
 
