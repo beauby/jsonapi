@@ -38,13 +38,13 @@ module JSONAPI
 
       [:id, :status, :code, :title, :detail, :meta].each do |key|
         define_method(key) do |*args, &block|
-          self.send("@#{key}=", args[0])
-          self.send("@#{key}_block=", block)
+          send("@#{key}=", args[0])
+          send("@#{key}_block=", block)
         end
       end
 
       def link(name, &block)
-        self.link_blocks[name] = block
+        link_blocks[name] = block
       end
 
       def source(&block)
@@ -75,8 +75,9 @@ module JSONAPI
     end
 
     def source
-      @_source ||= JSONAPI::SerializableErrorSource.as_jsonapi(
-        @_param_hash, self.class.source_block)
+      @_source ||=
+        JSONAPI::SerializableErrorSource.as_jsonapi(@_param_hash,
+                                                    self.class.source_block)
     end
 
     [:id, :status, :code, :title, :detail, :meta].each do |key|

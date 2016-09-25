@@ -35,14 +35,14 @@ module JSONAPI
       @primary = []
       @included = []
       @hashes = {}
-      @processed = Set.new  # NOTE(beauby): Set of [type, id, prefix].
+      @processed = Set.new # NOTE(beauby): Set of [type, id, prefix].
       @queue = []
 
       Array(@resources).each do |res|
         process_resource(res, '', @include, true)
         @processed.add([res.jsonapi_type, res.jsonapi_id, ''])
       end
-      until @queue.empty? do
+      until @queue.empty?
         res, prefix, include_dir = @queue.pop
         process_resource(res, prefix, include_dir, false)
       end
@@ -65,10 +65,10 @@ module JSONAPI
       else
         (is_primary ? @primary : @included) << (@hashes[ri] = hash)
       end
-      process_relationships(hash, res, prefix, include_dir)
+      process_relationships(res, prefix, include_dir)
     end
 
-    def process_relationships(hash, res, prefix, include_dir)
+    def process_relationships(res, prefix, include_dir)
       res.jsonapi_related(include_dir.keys).each do |key, data|
         Array(data).each do |child_res|
           child_prefix = "#{prefix}.#{key}"

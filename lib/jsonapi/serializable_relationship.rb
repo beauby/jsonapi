@@ -45,8 +45,8 @@ module JSONAPI
       @_linkage_data_block = block
     end
 
-    def meta(value = nil, &block)
-      @_meta = value || block.call
+    def meta(value = nil)
+      @_meta = value || yield
     end
 
     def link(name, &block)
