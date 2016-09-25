@@ -1,4 +1,3 @@
-require 'active_support/core_ext/class/attribute'
 require 'jsonapi/serializable_link'
 
 module JSONAPI
@@ -24,15 +23,10 @@ module JSONAPI
   end
 
   class SerializableError
-    class_attribute :id, :id_block, :status, :status_block, :code, :code_block,
+    class << self
+      attr_accessor :id, :id_block, :status, :status_block, :code, :code_block,
                     :title, :title_block, :detail, :detail_block, :meta,
                     :meta_block, :source_block, :link_blocks
-    self.link_blocks = {}
-
-    class << self
-      def inherited(subclass)
-        subclass.link_blocks = {}
-      end
 
       [:id, :status, :code, :title, :detail, :meta].each do |key|
         define_method(key) do |*args, &block|
@@ -48,6 +42,13 @@ module JSONAPI
       def source(&block)
         self.source_block = block
       end
+    end
+
+    self.link_blocks = {}
+
+    def self.inherited(klass)
+      super
+      klass.link_blocks = self.class.link_blocks.dup
     end
 
     def initialize(params = {})
