@@ -8,9 +8,7 @@ module JSONAPI
     end
 
     def initialize(params = {})
-      params.each do |name, value|
-        instance_variable_set("@#{name}", value)
-      end
+      params.each { |k, v| instance_variable_set("@#{k}", v) }
       @_data = {}
     end
 
