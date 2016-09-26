@@ -1,3 +1,5 @@
+require 'jsonapi/include_directive'
+
 module JSONAPI
   class Renderer
     def initialize(resources, options = {})
