@@ -1,6 +1,6 @@
 language: ruby
 sudo: false
-before_script:
+before_install:
   - bundle update
 rvm:
   - 2.1
