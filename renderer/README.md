@@ -17,6 +17,11 @@ $ gem install jsonapi-renderer
 
 ## Usage
 
+First, require the gem:
+```ruby
+require 'jsonapi/renderer'
+```
+
 ### Rendering resources
 
 A resource here is any class that implements the following interface:
