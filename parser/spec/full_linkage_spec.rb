@@ -38,7 +38,7 @@ describe JSONAPI::Parser, '#parse' do
         }]
     }
 
-    JSONAPI::Parser.parse(payload, verify_linkage: true)
+    JSONAPI.parse(payload, verify_linkage: true)
   end
 
   it 'succeeds when full linkage is respected' do
@@ -103,7 +103,7 @@ describe JSONAPI::Parser, '#parse' do
       ]
     }
 
-    JSONAPI::Parser.parse(payload, verify_linkage: true)
+    JSONAPI.parse(payload, verify_linkage: true)
   end
 
   it 'fails when full linkage is not respected' do
@@ -155,7 +155,7 @@ describe JSONAPI::Parser, '#parse' do
       ]
     }
 
-    expect { JSONAPI::Parser.parse(payload, verify_linkage: true) }
+    expect { JSONAPI.parse(payload, verify_linkage: true) }
       .to raise_error(JSONAPI::Parser::InvalidDocument)
   end
 end

@@ -38,7 +38,7 @@ describe JSONAPI::Parser, '#parse' do
         }]
     }
 
-    JSONAPI::Parser.parse(payload, verify_duplicates: true)
+    JSONAPI.parse(payload, verify_duplicates: true)
   end
 
   it 'fails when there are duplicates within primary data' do
@@ -53,7 +53,7 @@ describe JSONAPI::Parser, '#parse' do
         }]
     }
 
-    expect { JSONAPI::Parser.parse(payload, verify_duplicates: true) }
+    expect { JSONAPI.parse(payload, verify_duplicates: true) }
       .to raise_error(JSONAPI::Parser::InvalidDocument)
   end
 
@@ -70,7 +70,7 @@ describe JSONAPI::Parser, '#parse' do
         }]
     }
 
-    expect { JSONAPI::Parser.parse(payload, verify_duplicates: true) }
+    expect { JSONAPI.parse(payload, verify_duplicates: true) }
       .to raise_error(JSONAPI::Parser::InvalidDocument)
   end
 
@@ -89,7 +89,7 @@ describe JSONAPI::Parser, '#parse' do
         }]
     }
 
-    expect { JSONAPI::Parser.parse(payload, verify_duplicates: true) }
+    expect { JSONAPI.parse(payload, verify_duplicates: true) }
       .to raise_error(JSONAPI::Parser::InvalidDocument)
   end
 end

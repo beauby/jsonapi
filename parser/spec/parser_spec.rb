@@ -47,7 +47,7 @@ describe JSONAPI::Parser, '#parse' do
   end
 
   it 'works' do
-    document = JSONAPI::Parser.parse(@payload)
+    document = JSONAPI.parse(@payload)
 
     expect(document.meta.keys).to eq ['count']
     expect(document.meta['count']).to eq '13'

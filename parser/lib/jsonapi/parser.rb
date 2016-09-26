@@ -1,18 +1,16 @@
 require 'json'
 
-require 'jsonapi/attributes'
-require 'jsonapi/document'
-require 'jsonapi/error'
-require 'jsonapi/exceptions'
-require 'jsonapi/jsonapi'
-require 'jsonapi/link'
-require 'jsonapi/links'
-require 'jsonapi/relationship'
-require 'jsonapi/relationships'
-require 'jsonapi/resource'
-require 'jsonapi/resource_identifier'
+require 'jsonapi/parser/attributes'
 require 'jsonapi/parser/document'
+require 'jsonapi/parser/error'
 require 'jsonapi/parser/exceptions'
+require 'jsonapi/parser/jsonapi'
+require 'jsonapi/parser/link'
+require 'jsonapi/parser/links'
+require 'jsonapi/parser/relationship'
+require 'jsonapi/parser/relationships'
+require 'jsonapi/parser/resource'
+require 'jsonapi/parser/resource_identifier'
 
 module JSONAPI
   module_function
