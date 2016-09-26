@@ -88,4 +88,8 @@ module JSONAPI
   def render(resources, options = {})
     Renderer.new(resources, options).as_json
   end
+
+  def render_errors(errors)
+    Renderer.new(errors, errors: true).as_json
+  end
 end
