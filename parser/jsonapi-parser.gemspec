@@ -1,4 +1,4 @@
-version = File.expand_path('../JSONAPI_VERSION', __FILE__).strip
+version = File.read(File.expand_path('../../JSONAPI_VERSION', __FILE__)).strip
 
 Gem::Specification.new do |spec|
   spec.name          = 'jsonapi-parser'

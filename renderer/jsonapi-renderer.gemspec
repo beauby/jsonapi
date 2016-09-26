@@ -1,4 +1,4 @@
-version = File.expand_path('../JSONAPI_VERSION', __FILE__).strip
+version = File.read(File.expand_path('../../JSONAPI_VERSION', __FILE__)).strip
 
 Gem::Specification.new do |spec|
   spec.name          = 'jsonapi-renderer'
@@ -12,6 +12,4 @@ Gem::Specification.new do |spec|
 
   spec.files         = Dir['LICENSE', 'README.md', 'lib/**/*']
   spec.require_path  = 'lib'
-
-  spec.add_dependency 'json', '~>1.8'
 end
