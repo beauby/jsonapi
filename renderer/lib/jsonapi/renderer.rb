@@ -8,7 +8,8 @@ module JSONAPI
       @meta = options[:meta] || nil
       @links = options[:links] || {}
       @fields = options[:fields] || {}
-      @jsonapi = nil # NOTE(beauby): Room for some nifty defaults on those.
+      # NOTE(beauby): Room for some nifty defaults on those.
+      @jsonapi = options[:jsonapi_object] || nil
       @include = JSONAPI::IncludeDirective.new(options[:include] || {})
     end
 
