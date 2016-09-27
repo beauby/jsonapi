@@ -1,5 +1,3 @@
-require 'json'
-
 require 'jsonapi/parser/attributes'
 require 'jsonapi/parser/document'
 require 'jsonapi/parser/error'
@@ -17,14 +15,12 @@ module JSONAPI
 
   # Parse a JSON API document.
   #
-  # @param document [Hash, String] the JSON API document.
-  # @param options [Hash] options
+  # @param [Hash] document The JSON API document.
+  # @param [Hash] options options
   #   @option options [Boolean] :id_optional (false) Whether the resource
   #     objects in the primary data must have an id.
   # @return [JSONAPI::Parser::Document]
   def parse(document, options = {})
-    hash = document.is_a?(Hash) ? document : JSON.parse(document)
-
-    Parser::Document.new(hash, options)
+    Parser::Document.new(document, options)
   end
 end

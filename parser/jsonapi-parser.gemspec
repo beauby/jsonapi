@@ -12,6 +12,4 @@ Gem::Specification.new do |spec|
 
   spec.files         = Dir['LICENSE', 'README.md', 'lib/**/*']
   spec.require_path  = 'lib'
-
-  spec.add_dependency 'json', '~>1.8'
 end

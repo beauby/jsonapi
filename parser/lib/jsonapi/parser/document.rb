@@ -5,6 +5,7 @@ module JSONAPI
       attr_reader :data, :meta, :errors, :json_api, :links, :included
 
       def initialize(document_hash, options = {})
+        fail InvalidDocument if document_hash.nil?
         @hash = document_hash
         @options = options
         @data_defined = document_hash.key?('data')
