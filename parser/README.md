@@ -24,6 +24,7 @@ require 'jsonapi/parser'
 
 Then, parse a JSON API document:
 ```ruby
+json_hash = JSON.parse(json_string)
 document = JSONAPI.parse(json_hash)
 ```
 
