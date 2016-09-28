@@ -23,7 +23,7 @@ module JSONAPI
   #     objects in the primary data must have an id.
   # @return [JSONAPI::Parser::Document]
   def parse(document, options = {})
-    raise Parser::InvalidDocument, 'document cannot be nil' if document.nil?
+    raise Parser::InvalidDocument, 'document must be a hash' unless document.is_a?(Hash)
     hash = document.is_a?(Hash) ? document : JSON.parse(document)
 
     Parser::Document.new(hash, options)
