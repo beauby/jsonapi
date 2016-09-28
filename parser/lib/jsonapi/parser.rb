@@ -17,7 +17,7 @@ module JSONAPI
 
   # Parse a JSON API document.
   #
-  # @param document [Hash, String] the JSON API document.
+  # @param document [Hash] the JSON API document.
   # @param options [Hash] options
   #   @option options [Boolean] :id_optional (false) Whether the resource
   #     objects in the primary data must have an id.
