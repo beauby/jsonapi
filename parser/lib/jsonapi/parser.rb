@@ -24,8 +24,6 @@ module JSONAPI
   # @return [JSONAPI::Parser::Document]
   def parse(document, options = {})
     raise Parser::InvalidDocument, 'document must be a hash' unless document.is_a?(Hash)
-    hash = document.is_a?(Hash) ? document : JSON.parse(document)
-
-    Parser::Document.new(hash, options)
+    Parser::Document.new(document, options)
   end
 end
