@@ -94,4 +94,20 @@ describe JSONAPI::Parser, '#parse' do
     expect(document.data.first.relationships.author.data.to_hash).to eq @author_data_hash
     expect(document.data.first.relationships.comments.data.map(&:to_hash)).to eq @comments_data_hash
   end
+
+  context 'when a relationship has nil value' do
+    it 'raises InvalidDocument' do
+      payload = {
+        'data' => {
+          'type' => 'users',
+          'relationships' => {
+            'posts' => nil
+          }
+        }
+      }
+
+      expect { JSONAPI.parse(payload) }
+        .to raise_error JSONAPI::Parser::InvalidDocument
+    end
+  end
 end
