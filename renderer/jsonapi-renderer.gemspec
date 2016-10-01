@@ -5,11 +5,11 @@ Gem::Specification.new do |spec|
   spec.version       = version
   spec.author        = 'Lucas Hosseini'
   spec.email         = 'lucas.hosseini@gmail.com'
-  spec.summary       = 'Render JSON API documents'
-  spec.description   = 'Render JSON API documents'
+  spec.summary       = 'Render JSONAPI documents.'
+  spec.description   = 'Low-level renderer for JSONAPI documents.'
   spec.homepage      = 'https://github.com/beauby/jsonapi'
   spec.license       = 'MIT'
 
-  spec.files         = Dir['LICENSE', 'README.md', 'lib/**/*']
+  spec.files         = Dir['README.md', 'lib/**/*']
   spec.require_path  = 'lib'
 end
