@@ -32,7 +32,7 @@ document = JSONAPI.parse(json_hash)
 ```ruby
   document = JSONAPI.parse(json_hash)
   # Should the document be invalid, the parse method would fail with a
-  #   JSONAPI::Parser::InvalidDocument error.
+  #   JSONAPI::Validator::InvalidDocument error.
 
   document.data.links.defined?(:self)
   # => true
