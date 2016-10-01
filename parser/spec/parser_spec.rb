@@ -107,7 +107,7 @@ describe JSONAPI::Parser, '#parse' do
       }
 
       expect { JSONAPI.parse(payload) }
-        .to raise_error JSONAPI::Parser::InvalidDocument
+        .to raise_error JSONAPI::Validator::InvalidDocument
     end
   end
 

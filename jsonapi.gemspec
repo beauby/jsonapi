@@ -14,6 +14,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'jsonapi-parser', version
   spec.add_dependency 'jsonapi-renderer', version
+  spec.add_dependency 'jsonapi-validator', version
 
   spec.add_development_dependency 'rake', '>=0.9'
   spec.add_development_dependency 'rspec', '~>3.4'

@@ -5,10 +5,6 @@ module JSONAPI
       attr_reader :id, :links, :status, :code, :title, :detail, :source, :meta
 
       def initialize(error_hash, options = {})
-        fail InvalidDocument,
-             "the value of 'errors' MUST be an array of error objects" unless
-          error_hash.is_a?(Hash)
-
         @hash = error_hash
         @id = error_hash['id'] if error_hash.key?('id')
         links_hash = error_hash['links'] || {}

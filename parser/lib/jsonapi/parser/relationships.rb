@@ -5,18 +5,9 @@ module JSONAPI
       include Enumerable
 
       def initialize(relationships_hash, options = {})
-        fail InvalidDocument,
-             "the value of 'relationships' MUST be an object" unless
-          relationships_hash.is_a?(Hash)
-
         @hash = relationships_hash
         @relationships = {}
         relationships_hash.each do |rel_name, rel_hash|
-          unless rel_hash.is_a?(Hash)
-            fail InvalidDocument,
-                 "the value of a relationship MUST be an object"
-          end
-
           @relationships[rel_name.to_s] = Relationship.new(rel_hash, options)
           define_singleton_method(rel_name) do
             @relationships[rel_name.to_s]

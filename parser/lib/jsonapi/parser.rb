@@ -1,3 +1,4 @@
+require 'jsonapi/validator'
 require 'jsonapi/parser/attributes'
 require 'jsonapi/parser/document'
 require 'jsonapi/parser/error'
@@ -21,7 +22,7 @@ module JSONAPI
   #     objects in the primary data must have an id.
   # @return [JSONAPI::Parser::Document]
   def parse(document, options = {})
-    raise Parser::InvalidDocument, 'document must be a hash' unless document.is_a?(Hash)
+    validate!(document)
     Parser::Document.new(document, options)
   end
 end

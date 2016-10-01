@@ -25,6 +25,7 @@ require 'jsonapi'
 Then, see docs for the part you are interested in:
 * [parsing](parser/README.md)
 * [rendering](renderer/README.md)
+* [validating](validator/README.md)
 
 ## License
 

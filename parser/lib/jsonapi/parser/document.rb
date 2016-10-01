@@ -36,21 +36,11 @@ module JSONAPI
       private
 
       def validate!
-        case
-        when !@data_defined && !@meta_defined && !@errors_defined
-          fail InvalidDocument,
-               "a document MUST contain at least one of 'data', 'meta', or" \
-               " or 'errors' at top-level"
-        when @data_defined && @errors_defined
-          fail InvalidDocument,
-               "'data' and 'errors' MUST NOT coexist in the same document"
-        when !@data_defined && @included_defined
-          fail InvalidDocument, "'included' MUST NOT be present unless 'data' is"
-        when @options[:verify_duplicates] && duplicates?
-          fail InvalidDocument,
+        if @options[:verify_duplicates] && duplicates?
+          raise JSONAPI::Validator::InvalidDocument,
                "resources MUST NOT appear both in 'data' and 'included'"
-        when @options[:verify_linkage] && !full_linkage?
-          fail InvalidDocument,
+        elsif @options[:verify_linkage] && !full_linkage?
+          raise JSONAPI::Validator::InvalidDocument,
                "resources in 'included' MUST respect full-linkage"
         end
       end
@@ -69,8 +59,7 @@ module JSONAPI
         return true unless @included
 
         reachable = Set.new
-        # NOTE(lucas): Does Array() already dup?
-        queue = Array(data).dup
+        queue = Array(data)
         included_resources = Hash[included.map { |r| [[r.type, r.id], r] }]
         queue.each { |resource| reachable << [resource.type, resource.id] }
 
@@ -94,33 +83,23 @@ module JSONAPI
       def parse_data(data_hash)
         collection = data_hash.is_a?(Array)
         if collection
-          data_hash.map { |h| Resource.new(h, @options.merge(id_optional: true)) }
+          data_hash.map { |h| Resource.new(h, @options) }
         elsif data_hash.nil?
           nil
         else
-          Resource.new(data_hash, @options.merge(id_optional: true))
+          Resource.new(data_hash, @options)
         end
       end
 
       def parse_meta(meta_hash)
-        fail InvalidDocument, "the value of 'meta' MUST be an object" unless
-          meta_hash.is_a?(Hash)
         meta_hash
       end
 
       def parse_included(included_hash)
-        fail InvalidDocument,
-             "the value of 'included' MUST be an array of resource objects" unless
-          included_hash.is_a?(Array)
-
         included_hash.map { |h| Resource.new(h, @options) }
       end
 
       def parse_errors(errors_hash)
-        fail InvalidDocument,
-             "the value of 'errors' MUST be an array of error objects" unless
-          errors_hash.is_a?(Array)
-
         errors_hash.map { |h| Error.new(h, @options) }
       end
     end

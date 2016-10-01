@@ -5,10 +5,6 @@ module JSONAPI
       include Enumerable
 
       def initialize(attributes_hash, options = {})
-        fail InvalidDocument,
-             "the value of 'attributes' MUST be an object" unless
-          attributes_hash.is_a?(Hash)
-
         @hash = attributes_hash
         @attributes = {}
         attributes_hash.each do |attr_name, attr_val|
