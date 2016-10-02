@@ -4,12 +4,12 @@ module JSONAPI
   module Parser
     class Document
       TOP_LEVEL_KEYS = %w(data errors meta).freeze
-      EXTENDED_TOP_LEVEL_KEYS = (TOP_LEVEL_KEYS +
-                                 %w(jsonapi links included)).freeze
+      EXTENDED_TOP_LEVEL_KEYS =
+        (TOP_LEVEL_KEYS + %w(jsonapi links included)).freeze
       RESOURCE_KEYS = %w(id type attributes relationships links meta).freeze
       RESOURCE_IDENTIFIER_KEYS = %w(id type).freeze
-      EXTENDED_RESOURCE_IDENTIFIER_KEYS = (RESOURCE_IDENTIFIER_KEYS +
-                                           %w(meta)).freeze
+      EXTENDED_RESOURCE_IDENTIFIER_KEYS =
+        (RESOURCE_IDENTIFIER_KEYS + %w(meta)).freeze
       RELATIONSHIP_KEYS = %w(data links meta).freeze
       RELATIONSHIP_LINK_KEYS = %w(self related).freeze
       JSONAPI_OBJECT_KEYS = %w(version meta).freeze
@@ -48,7 +48,7 @@ module JSONAPI
         elsif data.is_a?(Array)
           data.each { |res| parse_resource!(res) }
         elsif data.nil?
-        # Do nothing
+          # Do nothing
         else
           ensure!(false,
                   'Primary data must be either nil, an object or an array.')
@@ -76,14 +76,14 @@ module JSONAPI
 
       # @api private
       def self.parse_attributes!(attrs)
-        ensure!(attrs.is_a?(Hash), 'The value of the attributes key MUST be an ' \
-                                   'object.')
+        ensure!(attrs.is_a?(Hash),
+                'The value of the attributes key MUST be an object.')
       end
 
       # @api private
       def self.parse_relationships!(rels)
-        ensure!(rels.is_a?(Hash), 'The value of the relationships key MUST be ' \
-                                  'an object')
+        ensure!(rels.is_a?(Hash),
+                'The value of the relationships key MUST be an object')
         rels.values.each { |rel| parse_relationship!(rel) }
       end
 
@@ -91,10 +91,11 @@ module JSONAPI
       def self.parse_relationship!(rel)
         ensure!(rel.is_a?(Hash), 'A relationship object must be an object.')
         unexpected_keys = rel.keys - RELATIONSHIP_KEYS
-        ensure!(unexpected_keys.empty?, 'Unexpected members for relationship: ' \
-                                        "#{unexpected_keys}")
-        ensure!(!rel.keys.empty?, 'A relationship object MUST contain at least '\
-                                  "one of #{RELATIONSHIP_KEYS}")
+        ensure!(unexpected_keys.empty?,
+                "Unexpected members for relationship: #{unexpected_keys}")
+        ensure!(!rel.keys.empty?,
+                'A relationship object MUST contain at least one of ' \
+                "#{RELATIONSHIP_KEYS}")
         parse_relationship_data!(rel['data']) if rel.key?('data')
         parse_relationship_links!(rel['links']) if rel.key?('links')
         parse_meta!(rel['meta']) if rel.key?('meta')
@@ -107,7 +108,7 @@ module JSONAPI
         elsif data.is_a?(Array)
           data.each { |ri| parse_resource_identifier!(ri) }
         elsif data.nil?
-        # Do nothing
+          # Do nothing
         else
           ensure!(false, 'Relationship data must be either nil, an object or ' \
                          'an array.')
@@ -116,10 +117,12 @@ module JSONAPI
 
       # @api private
       def self.parse_resource_identifier!(ri)
-        ensure!(ri.is_a?(Hash), 'A resource identifier object must be an object')
+        ensure!(ri.is_a?(Hash),
+                'A resource identifier object must be an object')
         unexpected_keys = ri.keys - EXTENDED_RESOURCE_IDENTIFIER_KEYS
-        ensure!(unexpected_keys.empty?, 'Unexpected members for resource ' \
-                                        "identifier: #{unexpected_keys}.")
+        ensure!(unexpected_keys.empty?,
+                'Unexpected members for resource identifier: ' \
+                "#{unexpected_keys}.")
         ensure!(ri.keys & RESOURCE_IDENTIFIER_KEYS != RESOURCE_IDENTIFIER_KEYS,
                 'A resource identifier object MUST contain ' \
                 "#{RESOURCE_IDENTIFIER_KEYS} members.")
@@ -145,10 +148,10 @@ module JSONAPI
       # @api private
       def self.parse_link!(link)
         if link.is_a?(String)
-        # Do nothing
+          # Do nothing
         elsif link.is_a?(Hash)
-        # TODO(beauby): Pending clarification request
-        #   https://github.com/json-api/json-api/issues/1103
+          # TODO(beauby): Pending clarification request
+          #   https://github.com/json-api/json-api/issues/1103
         else
           ensure!(false,
                   'The value of a link must be either a string or an object.')
@@ -164,8 +167,9 @@ module JSONAPI
       def self.parse_jsonapi!(jsonapi)
         ensure!(jsonapi.is_a?(Hash), 'A JSONAPI object must be an object.')
         unexpected_keys = jsonapi.keys - JSONAPI_OBJECT_KEYS
-        ensure!(unexpected_keys.empty?, 'Unexpected members for JSONAPI ' \
-                                        "object: #{JSONAPI_OBJECT_KEYS}.")
+        ensure!(unexpected_keys.empty?,
+                'Unexpected members for JSONAPI object: ' \
+                "#{JSONAPI_OBJECT_KEYS}.")
         if jsonapi.key?('version')
           ensure!(jsonapi['version'].is_a?(String),
                   "Value of JSONAPI's version member must be a string.")
@@ -175,15 +179,15 @@ module JSONAPI
 
       # @api private
       def self.parse_included!(included)
-        ensure!(included.is_a?(Array), 'Top level included member must be an ' \
-                                       'array.')
+        ensure!(included.is_a?(Array),
+                'Top level included member must be an array.')
         included.each { |res| parse_resource!(res) }
       end
 
       # @api private
       def self.parse_errors!(errors)
-        ensure!(errors.is_a?(Array), 'Top level errors member must be an ' \
-                                     'array.')
+        ensure!(errors.is_a?(Array),
+                'Top level errors member must be an array.')
         errors.each { |error| parse_ensure!(error) }
       end
 
