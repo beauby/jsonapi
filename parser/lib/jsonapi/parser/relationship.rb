@@ -7,7 +7,7 @@ module JSONAPI
       #
       # @param [Hash] document The input JSONAPI document.
       # @raise [JSONAPI::Parser::InvalidDocument] if document is invalid.
-      def self.parse_relationship!(document)
+      def self.parse!(document)
         Document.ensure!(document.is_a?(Hash),
                          'A JSON object MUST be at the root of every JSONAPI ' \
                          'request and response containing data.')
