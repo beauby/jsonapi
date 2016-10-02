@@ -1,6 +1,18 @@
 require 'jsonapi/parser'
 
 describe JSONAPI::Parser, '.parse_response!' do
+  it 'succeeds on nil data' do
+    payload = { 'data' => nil }
+
+    expect { JSONAPI.parse_response!(payload) }.not_to raise_error
+  end
+
+  it 'succeeds on empty array data' do
+    payload = { 'data' => [] }
+
+    expect { JSONAPI.parse_response!(payload) }.not_to raise_error
+  end
+
   it 'works' do
     payload = {
       'data' => [
