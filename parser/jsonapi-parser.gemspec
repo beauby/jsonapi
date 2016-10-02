@@ -5,7 +5,7 @@ Gem::Specification.new do |spec|
   spec.version       = version
   spec.author        = 'Lucas Hosseini'
   spec.email         = 'lucas.hosseini@gmail.com'
-  spec.summary       = 'Parse JSONAPI documents'
+  spec.summary       = 'Parse JSONAPI documents.'
   spec.description   = 'Parse JSONAPI response documents, resource ' \
                        'creation/update payloads, and relationship ' \
                        'update payloads.'

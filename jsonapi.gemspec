@@ -5,8 +5,8 @@ Gem::Specification.new do |spec|
   spec.version       = version
   spec.author        = 'Lucas Hosseini'
   spec.email         = 'lucas.hosseini@gmail.com'
-  spec.summary       = 'Parsing and rendering JSONAPI documents.'
-  spec.description   = 'Parsing and rendering JSONAPI documents.'
+  spec.summary       = 'Parse and render JSONAPI documents.'
+  spec.description   = 'Efficiently parse and render JSONAPI documents.'
   spec.homepage      = 'https://github.com/beauby/jsonapi'
   spec.license       = 'MIT'
 
