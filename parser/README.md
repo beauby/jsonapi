@@ -23,7 +23,7 @@ require 'jsonapi/parser'
 ```
 Then simply parse a document:
 ```ruby
-# This will raise JSONAPI::Validator::InvalidDocument if an error is found.
+# This will raise JSONAPI::Parser::InvalidDocument if an error is found.
 JSONAPI.parse_response!(document_hash)
 ```
 or a resource create/update payload:
