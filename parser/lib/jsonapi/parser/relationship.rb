@@ -11,7 +11,7 @@ module JSONAPI
         Document.ensure!(document.is_a?(Hash),
                          'A JSON object MUST be at the root of every JSONAPI ' \
                          'request and response containing data.')
-        Document.ensure!(document.key?('data'),
+        Document.ensure!(document.keys == ['data'].freeze,
                          'A relationship update payload must contain primary ' \
                          'data.')
         Document.parse_relationship_data!(document['data'])
