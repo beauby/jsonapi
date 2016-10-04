@@ -14,7 +14,8 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/beauby/jsonapi'
   spec.license       = 'MIT'
 
-  spec.files         = ['README.md']
+  spec.files         = ['README.md', 'lib/**/*']
+  spec.require_path  = 'lib'
 
   spec.add_dependency 'jsonapi-parser', parser_version
   spec.add_dependency 'jsonapi-renderer', renderer_version
