@@ -50,4 +50,46 @@ describe JSONAPI::Parser, '.parse_response!' do
 
     expect { JSONAPI.parse_response!(payload) }.not_to raise_error
   end
+
+  it 'passes regardless of id/type order' do
+    payload = {
+      'data' => [
+        {
+          'type' => 'articles',
+          'id' => '1',
+          'relationships' => {
+            'comments' => {
+              'data' => [
+                { 'type' => 'comments', 'id' => '5' },
+                { 'id' => '12', 'type' => 'comments' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+
+    expect { JSONAPI.parse_response!(payload) }.to_not raise_error
+  end
+
+  it 'fails when an element is missing type or id' do
+    payload = {
+      'data' => [
+        {
+          'type' => 'articles',
+          'id' => '1',
+          'relationships' => {
+            'author' => {
+              'data' => { 'type' => 'people' }
+            }
+          }
+        }
+      ]
+    }
+
+    expect { JSONAPI.parse_response!(payload) }.to raise_error(
+      JSONAPI::Parser::InvalidDocument,
+      'A resource identifier object MUST contain ["id", "type"] members.'
+    )
+  end
 end

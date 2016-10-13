@@ -123,7 +123,7 @@ module JSONAPI
         ensure!(unexpected_keys.empty?,
                 'Unexpected members for resource identifier: ' \
                 "#{unexpected_keys}.")
-        ensure!(ri.keys & RESOURCE_IDENTIFIER_KEYS != RESOURCE_IDENTIFIER_KEYS,
+        ensure!(RESOURCE_IDENTIFIER_KEYS & ri.keys == RESOURCE_IDENTIFIER_KEYS,
                 'A resource identifier object MUST contain ' \
                 "#{RESOURCE_IDENTIFIER_KEYS} members.")
         ensure!(ri['id'].is_a?(String), 'Member id must be a string.')
