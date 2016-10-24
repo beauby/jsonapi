@@ -1,6 +1,11 @@
 # jsonapi
 Ruby gem for parsing/rendering [JSON API](http://jsonapi.org) documents.
 
+## Status
+
+[![Gem Version](https://badge.fury.io/rb/jsonapi.svg)](https://badge.fury.io/rb/jsonapi)
+[![Build Status](https://secure.travis-ci.org/beauby/jsonapi.svg?branch=master)](http://travis-ci.org/beauby/jsonapi?branch=master)
+
 ## Installation
 ```ruby
 # In Gemfile

@@ -1,6 +1,10 @@
 # jsonapi-parser
 Ruby gem for parsing [JSON API](http://jsonapi.org) documents.
 
+## Status
+
+[![Gem Version](https://badge.fury.io/rb/jsonapi-parser.svg)](https://badge.fury.io/rb/jsonapi-parser)
+
 ## Installation
 ```ruby
 # In Gemfile

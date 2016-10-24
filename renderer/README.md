@@ -1,6 +1,10 @@
 # jsonapi-renderer
 Ruby gem for rendering [JSON API](http://jsonapi.org) documents.
 
+## Status
+
+[![Gem Version](https://badge.fury.io/rb/jsonapi-renderer.svg)](https://badge.fury.io/rb/jsonapi-renderer)
+
 ## Installation
 ```ruby
 # In Gemfile
