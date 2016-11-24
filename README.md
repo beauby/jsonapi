@@ -1,3 +1,7 @@
+# MOVED
+
+## Development of the `jsonapi-parser` and `jsonapi-renderer` gems now takes place at [jsonapi-rb/parser](https://github.com/jsonapi-rb/parser) and [jsonapi-rb/renderer](https://github.com/jsonapi-rb/renderer).
+
 # jsonapi
 Ruby gem for parsing/rendering [JSON API](http://jsonapi.org) documents.
 
@@ -19,17 +23,6 @@ or manually via
 ```
 $ gem install jsonapi
 ```
-
-## Usage
-
-First, require the gem:
-```ruby
-require 'jsonapi'
-```
-
-Then, see docs for the part you are interested in:
-* [parsing](parser/README.md)
-* [rendering](renderer/README.md)
 
 ## License
 
