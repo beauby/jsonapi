@@ -1,6 +1,14 @@
-# MOVED
+# Deprecated
 
-## Development of the `jsonapi-parser` and `jsonapi-renderer` gems now takes place at [jsonapi-rb/parser](https://github.com/jsonapi-rb/parser) and [jsonapi-rb/renderer](https://github.com/jsonapi-rb/renderer).
+This gem is deprecated. We reserve the right to update it, but have no intention of doing so.
+
+Please use the [jsonapi-parser](https://github.com/jsonapi-rb/parser) 
+and/or [jsonapi-renderer](https://github.com/jsonapi-rb/renderer) gems 
+directly, or try jsonapi-rb, depending on your needs.
+
+Development of the `jsonapi-parser` and `jsonapi-renderer` gems now takes place at 
+[jsonapi-rb/parser](https://github.com/jsonapi-rb/parser) and 
+[jsonapi-rb/renderer](https://github.com/jsonapi-rb/renderer).
 
 # jsonapi
 Ruby gem for parsing/rendering [JSON API](http://jsonapi.org) documents.
